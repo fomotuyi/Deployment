@@ -10,6 +10,8 @@ commands:
    # Exercise - Rollback
    destroy_environment:
      steps:
+       - aws-cli/install:
+          version: "3"
        - run:
            name: Destroy environment
            # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
