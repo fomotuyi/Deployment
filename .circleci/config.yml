@@ -43,7 +43,7 @@ jobs:
             aws cloudformation deploy \
             --template-file cloudfront.yml \
             --stack-name production-distro \
-            --parameter-overrides PipelineID="fiyinbucket-${CIRCLE_WORKFLOW_ID:0:7}"
+            --parameter-overrides PipelineID="fiyinbucket-${CIRCLE_WORKFLOW_ID:0:5}"
   # Exercise: Config and Deployment
   configure_infrastructure: 
     docker:
@@ -82,9 +82,9 @@ jobs:
         name: Execute bucket.yml - Create Cloudformation Stack
         command: |
           aws cloudformation deploy \
-          --template-file bucket.yml \
-          --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7} \
-          --parameter MyBucketName="fiyinbucket-${CIRCLE_WORKFLOW_ID:0:7}"
+          --template-body file://bucket.yml \
+          --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:5} \
+          --parameters MyBucketName="fiyinbucket-${CIRCLE_WORKFLOW_ID:0:5}"
     # Uncomment the step below if yoou wish to upload all contents of the current directory to the S3 bucket
     - run: aws s3 sync . s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
   # Fetch and save the pipeline ID (bucket ID) responsible for the last release.
@@ -130,7 +130,7 @@ workflows:
             - create_infrastructure
       - smoke_test:
           requires: 
-              - clean_up_old_front_end
+              - configure_infrastructure
       - create_and_deploy_front_end
       - promote_to_production:
           requires: 
